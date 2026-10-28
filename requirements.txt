@@ -1,0 +1,19 @@
+# Python 3.14, Windows 10 (19041) / 11
+customtkinter==6.0.0
+bleak==3.0.2
+pystray==0.19.5
+pillow==12.2.0
+winrt-runtime==3.2.1
+winrt-Windows.ApplicationModel==3.2.1
+winrt-Windows.ApplicationModel.Activation==3.2.1
+winrt-Windows.Devices.Bluetooth==3.2.1
+winrt-Windows.Devices.Bluetooth.Advertisement==3.2.1
+winrt-Windows.Devices.Bluetooth.GenericAttributeProfile==3.2.1
+winrt-Windows.Devices.Enumeration==3.2.1
+winrt-Windows.Devices.Radios==3.2.1
+winrt-Windows.Foundation==3.2.1
+winrt-Windows.Foundation.Collections==3.2.1
+winrt-Windows.Storage.Streams==3.2.1
+
+# Chỉ để build bản phát hành
+pyinstaller==6.22.3

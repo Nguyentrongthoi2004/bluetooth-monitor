@@ -1,0 +1,32 @@
+# Bản build và công cụ tải về
+build/
+dist/
+tools/
+*.spec
+
+# build_tools\ cũng là nơi cài sẵn PyInstaller (pip --target): chỉ đăng script của dự án
+build_tools/*
+!build_tools/make_icon.py
+!build_tools/make_msix_assets.py
+!build_tools/write_notices.py
+!build_tools/write_version_info.py
+
+# Sao lưu, thử nghiệm cũ, ghi chú nội bộ
+backups/
+archive/
+
+# Dữ liệu cá nhân khi chạy từ mã nguồn (cài đặt, lịch sử pin, log)
+headphone_settings*.json
+battery_state.json
+battery_history.jsonl
+*.log
+crash_dump.txt
+*.tmp
+
+# Python / editor
+__pycache__/
+*.pyc
+.venv/
+venv/
+.vscode/
+.idea/

@@ -1,0 +1,217 @@
+Bluetooth Monitor — bản portable
+
+Chạy Bluetooth Monitor.exe trong thư mục cùng tên. Giữ nguyên thư mục _internal bên cạnh file exe. Không cần cài Python.
+
+App tự nhận tên tai nghe Bluetooth đang kết nối ngay khi Windows báo có thay đổi kết nối (dùng sự kiện của Windows, gần như không tốn CPU khi rảnh); ngoài ra cứ 30 giây đối chiếu lại một lần và cập nhật pin Windows. Nếu Windows không hỗ trợ sự kiện, app quay về kiểm tra mỗi 2 giây. Tên xuất hiện trên thẻ thiết bị và tooltip khay hệ thống. Nếu có nhiều tai nghe, ưu tiên chiếc mới xuất hiện; nếu nhiều chiếc xuất hiện trong cùng lần kiểm tra thì chọn theo thứ tự tên. Ngắt hết thì tai nghe vừa dùng vẫn hiện nhưng chuyển xám, ghi “Không kết nối” kèm mức pin lần cuối; icon khay cũng chuyển xám. Tắt Bluetooth của máy cũng được tính là ngắt kết nối (“Không kết nối · Bluetooth của máy đang tắt”). Vừa kết nối hoặc ngắt, app đọc lại nhanh mỗi 2 giây trong 20 giây vì Windows thường điền số pin chậm vài giây.
+
+Pin thiết bị: đọc mức pin do Windows cung cấp qua PnP, ghép theo địa chỉ Bluetooth của thiết bị đang kết nối, không ghép theo tên. Dòng nguồn ghi “Pin do Windows cung cấp”. Đây có thể là giá trị Windows đã lưu; đọc lại không chứng minh tai nghe vừa gửi mẫu pin mới. Không suy ra trạng thái sạc hoặc pin riêng trái/phải/hộp từ một mức pin chung. Nếu Windows không cung cấp giá trị hợp lệ thì hiện --%.
+
+Pin BLE (chuẩn chung): với mọi tai nghe đang kết nối, app thử đọc Battery Service chuẩn của Bluetooth (0x180F) theo đúng địa chỉ của tai nghe đó. Nếu tai nghe hỗ trợ (ví dụ Akko S9 Ultra), số pin chi tiết tới 1% và tự cập nhật khi pin thay đổi; dòng nguồn ghi “Pin từ tai nghe (BLE)” và được ưu tiên hơn pin Windows. Mất kết nối BLE thì quay về pin Windows. Thử thất bại 3 lần thì ngừng thử cho tới lần kết nối sau. Tai nghe chỉ báo pin qua app riêng của hãng (AirPods, một số Sony/Samsung…) chưa được hỗ trợ.
+
+Pin chi tiết JBL CLUB PRO+ TWS: khi có gói Fast Pair mới từ chiếc JBL đã cấu hình, hiện pin trái/phải/hộp và trạng thái sạc tương ứng. Dữ liệu quá 20 giây được ẩn và app quay về mức pin Windows nếu có. Định danh Windows của chiếc JBL gốc nằm trong headphone_settings.json ở thư mục dữ liệu; không tự nhận tai nghe khác là cùng thiết bị chỉ vì trùng tên.
+
+Ngắt kết nối hoặc mất dữ liệu pin thì xóa phần trăm cũ. Lỗi đọc pin không làm mất tên tai nghe đang kết nối. Bấm nút làm mới để đọc lại kết nối và pin.
+
+Giao diện 2.0: cửa sổ nhỏ mở ở góc phải dưới, ngay trên thanh taskbar (kéo thanh trên cùng để dời chỗ). Khi có nhiều tai nghe kết nối, danh sách bên dưới cho phép bấm chọn chiếc muốn xem; menu khay cũng có mục “Chọn tai nghe”. Biểu tượng khay hiện số % pin (tai thấp nhất với JBL), có thể tắt trong Cài đặt.
+
+Cảnh báo pin yếu: thông báo Windows một lần khi pin xuống dưới ngưỡng (10/15/20/30%, mặc định 20%); không báo khi tai đang sạc; báo lại sau khi pin đã lên trên ngưỡng + 5%.
+
+Cài đặt (nút ⚙): bảng cài đặt mở ở giữa màn hình, bảng pin tạm ẩn; bấm “Lưu & đóng” (hoặc ✕) để quay lại bảng pin. Mỗi thay đổi được lưu ngay khi bấm. Phần “Nâng cao” (thu gọn sẵn) chứa phím tắt, thiết bị khác và nút “Liên kết tai nghe đang chọn” để gán pin chi tiết Fast Pair cho đúng chiếc JBL của bạn.
+
+Bấm icon khay hệ thống để mở cửa sổ. Mở app lần nữa sẽ hiện cửa sổ đang chạy. Chọn Thoát ở menu khay để đóng hoàn toàn. Chưa hỗ trợ điều khiển ANC.
+
+Log và cấu hình bản portable: %LOCALAPPDATA%\Bluetooth Monitor
+Mã nguồn: https://github.com/Nguyentrongthoi2004/bluetooth-monitor
+
+
+Nâng cấp 2.1
+
+1. Lịch sử pin: lưu tối đa 7 ngày cho mọi thiết bị đang kết nối có pin, theo đúng định danh thiết bị. Biểu đồ trong thẻ có nút 24 giờ / 7 ngày. Ước tính thời gian còn lại chỉ hiện khi có ít nhất 15 phút giảm pin, giảm từ 3% trở lên trong 6 giờ gần nhất. Không đủ dữ liệu thì ẩn ước tính. File battery_history.jsonl ở thư mục dữ liệu, chịu được một dòng JSON hỏng. Ngoài thay đổi mức pin và mẫu định kỳ 5 phút, thay đổi cờ sạc hoặc nguồn cũng được lưu để không ước tính xuyên qua một lần sạc.
+
+2. Sạc đầy: bật mặc định, chọn ngưỡng 80/90/100%. Fast Pair dùng cờ sạc riêng của tai trái/phải/hộp. Với pin BLE/Windows không có cờ sạc, chỉ dùng mức pin tăng để quyết định thông báo sạc đầy; giao diện không tự hiện trạng thái sạc. Mỗi lần đạt ngưỡng chỉ báo một lần; cho phép báo lại sau khi xuống dưới ngưỡng trừ 5%. Đổi nguồn pin bắt đầu lại việc so sánh mức tăng để tránh cảnh báo giả.
+
+3. Kết nối/ngắt kết nối: bật mặc định, báo tên thiết bị và mức pin nếu đã có. Danh sách đầu tiên khi mở app không phát thông báo; lỗi đọc kết nối không tạo thông báo ngắt giả. Thông báo được gửi ngay với dữ liệu sẵn có.
+
+4. Phím tắt: Ctrl+Alt+B mở/ẩn cửa sổ, Ctrl+Alt+H đổi loa ↔ tai nghe; có thể tắt trong Cài đặt › Nâng cao. Nếu phím bị ứng dụng khác chiếm, app ghi log và hiện chú thích trong Cài đặt.
+
+5. Thiết bị khác: bật “Hiện chuột, bàn phím, tay cầm” để nhận thêm thiết bị Classic peripheral và BLE đang kết nối. Mặc định tắt. Biểu tượng theo loại thiết bị do Windows cung cấp; không đoán loại hoặc ghép pin theo tên. Pin PnP BTHENUM/BTHLE được ghép bằng địa chỉ, BLE Battery Service vẫn được ưu tiên.
+
+7. Giao diện: chọn Hệ thống / Tối / Sáng (Hệ thống đọc chế độ ứng dụng Windows khi áp dụng). Chế độ gọn ẩn biểu đồ, danh sách và chú thích, giữ tên, số pin và thanh pin. Biểu tượng khay là vòng pin có số % ở giữa (nền tối để đọc rõ trên mọi taskbar).
+
+8. Tên riêng: bấm cây bút cạnh tên (hoặc nhấp đúp vào tên) để sửa ngay trên bảng pin; Enter hoặc bấm ra ngoài để lưu, Esc để hủy. Tên gắn với đúng định danh thiết bị. Để trống để dùng lại tên Windows. Tên riêng áp dụng cho thẻ, danh sách, khay, thông báo và cửa sổ nổi.
+
+9. Cửa sổ nổi: bật trong Cài đặt hoặc menu khay. Luôn ở trên cùng, nền mờ 90%, hiện pin chung hoặc pin L/R của JBL và cờ sạc khi nguồn cung cấp. Kéo để di chuyển, thả chuột để lưu vị trí; nhấp đúp mở cửa sổ chính.
+
+11. Bluetooth…: nút ở cửa sổ chính và mục menu khay mở trang Bluetooth của Windows. Thao tác kết nối/ngắt tai nghe âm thanh thực hiện tại trang này.
+
+Cài đặt 2.1 có thể cuộn, chia nhóm Hệ thống, Thông báo và liên kết Fast Pair. Các khóa cài đặt không biết vẫn được giữ. Lịch sử, cấu hình và trạng thái được ghi qua file tạm rồi thay thế file đích.
+
+
+Giao diện 2.3
+
+Icon mới (tai nghe trắng trên nền cam). Thanh tiêu đề Windows cùng màu với app. Số pin hiển thị bằng vòng tròn
+đổi màu theo mức pin, kèm “Pin tốt / trung bình / yếu” và độ chính xác của nguồn (BLE: 1%, Windows: bậc 10%).
+Các nút dùng biểu tượng Fluent của Windows 11. Biểu đồ có tô vùng dưới đường. Vẽ lại icon: python build_tools/make_icon.py
+
+Tính năng 2.4
+
+1. Cảnh báo cả khi chơi game: Windows thường chặn thông báo khi chơi game toàn màn hình hoặc khi bật Không làm phiền.
+Cảnh báo pin yếu giờ hiện thêm một bảng nổi ở góc phải dưới (không lấy focus của game) và phát âm báo của Windows.
+Trò chơi chạy “toàn màn hình độc quyền” (exclusive fullscreen) có thể vẫn che bảng nổi; âm báo vẫn nghe được.
+Báo trước khi hết pin: khi lịch sử đủ để ước tính, app báo lúc còn khoảng 15 hoặc 30 phút (chọn trong Cài đặt, mặc định 15).
+Mỗi lần xả pin chỉ báo một lần.
+
+2. Bảng nhỏ khi kết nối: vừa kết nối tai nghe (và bảng pin đang ẩn), góc phải dưới hiện tên và % pin trong 5 giây
+rồi tự ẩn; số pin tự cập nhật nếu Windows báo chậm. Bảng này thay cho thông báo “Đã kết nối” của Windows.
+Bấm vào bảng để mở bảng pin.
+
+3. Đổi loa ↔ tai nghe: cuối bảng pin có công tắc hai lựa chọn (lựa chọn sáng là nơi đang phát, dòng phụ ghi tên thiết bị; bấm bên kia để chuyển). Công tắc là [Loa | Tai nghe]: Loa là loa thật của máy (FxSound và các bộ tăng cường ảo không được tính là loa), Tai nghe là tai nghe đang chọn. Thiết bị khác chọn trong menu khay “Âm thanh phát ra” (ẩn/hiện trong Cài đặt › Hệ thống); cũng có Ctrl+Alt+H và menu khay. Đang phát ra loa thì chuyển sang tai nghe
+đang chọn; đang ở tai nghe thì chuyển về loa thật của máy. Menu khay “Âm thanh phát ra” liệt kê
+mọi thiết bị để chọn trực tiếp. Dùng giao diện IPolicyConfig không công bố của Windows (như EarTrumpet); nếu lỗi,
+bảng nổi báo “Không đổi được thiết bị phát”.
+
+Tính năng 2.5
+
+Thiết bị Bluetooth xung quanh: bấm nút “Thiết bị BT” ở thanh trên cùng của bảng pin (hoặc menu khay “Thiết bị Bluetooth xung quanh…”).
+Bảng hiện giữa màn hình, bảng pin tạm ẩn; app quét cả Bluetooth thường lẫn BLE như trang “Thêm thiết bị” của Windows,
+liệt kê thiết bị đang kết nối, đã ghép đôi và chưa ghép đôi kèm cường độ tín hiệu. Thiết bị chưa ghép đôi có nút
+“Ghép đôi” (nếu cần mã PIN/xác nhận, Windows tự hiện hộp thoại). Chỉ quét khi bảng đang mở. Thiết bị không tên ẩn
+mặc định. Nút “Cài đặt Bluetooth Windows” trong bảng và mục “Bluetooth…” ở menu khay mở trang Bluetooth của Windows.
+
+Bản 2.6 — đổi tên thành Bluetooth Monitor
+
+App không còn chỉ dành cho JBL nên đổi tên thành “Bluetooth Monitor” (file Bluetooth Monitor.exe, thư mục dữ liệu
+%LOCALAPPDATA%\Bluetooth Monitor). Lần chạy đầu, cài đặt và lịch sử pin được chép từ thư mục cũ
+“JBL Battery Monitor” (thư mục cũ được giữ nguyên). Nếu bản cũ đã bật “Khởi động cùng Windows”, mục này tự chuyển sang
+exe mới. Pin chi tiết JBL (Fast Pair) vẫn giữ nguyên.
+
+Thông số thiết bị: trong bảng “Thiết bị BT”, bấm vào một thiết bị để xem trạng thái, loại kết nối, địa chỉ, tín hiệu,
+pin, hãng, model và firmware. Pin của tai nghe đang kết nối lấy từ dữ liệu app đã có (ghép theo địa chỉ); thiết bị khác
+được đọc qua BLE theo chuẩn chung (Battery Service 0x180F, Device Information 0x180A). Thiết bị không hỗ trợ hiện “—”.
+Thiết bị CHƯA ghép đôi: chỉ xem thông tin lúc quét, app không kết nối tới nó (kết nối có thể làm bật lời mời
+ghép đôi); app chỉ ghép khi bạn bấm nút “Ghép đôi”.
+iPhone: ghép đôi iPhone với máy (nút “Ghép đôi” trong bảng) rồi mở chi tiết để đọc pin qua BLE.
+
+Bản 2.7
+
+Bỏ ghép đôi: trong trang chi tiết của thiết bị đã ghép đôi có nút “Bỏ ghép đôi” (dùng khi tai nghe bị kẹt, không kết
+nối được: bỏ ghép rồi ghép lại). App hỏi xác nhận ngay trong bảng trước khi làm; bấm Hủy thì không có gì thay đổi.
+
+Bảng chính gộp mọi thiết bị: danh sách “Thiết bị đang kết nối” (khi có từ 2 thiết bị) gồm tai nghe, chuột, bàn phím,
+tay cầm và điện thoại đã ghép đôi (ví dụ iPhone), mỗi dòng kèm % pin nếu đọc được. Bật/tắt bằng “Hiện cả chuột, bàn
+phím, tay cầm, điện thoại” trong Cài đặt › Nâng cao (bật sẵn).
+
+Bản 2.8
+
+Pin AirPods / Beats: khi AirPods hoặc Beats đang kết nối với máy, app đọc pin tai trái, tai phải, hộp sạc và trạng thái
+sạc từ gói quảng bá BLE của Apple (không cần ghép thêm gì). Gói này không chứa định danh Windows của thiết bị nên app
+chỉ nhận gói rất gần máy (tín hiệu từ -65 dBm trở lên) và lấy gói mạnh nhất trong 10 giây; nếu có AirPods của người
+khác sát bên, số liệu có thể lẫn. Quá 30 giây không thấy gói nào gần thì quay về pin chung của Windows. Trạng thái ghi
+“Trực tiếp · AirPods”. Chỉ quét khi đang có AirPods/Beats kết nối.
+
+Báo lỗi: Cài đặt › Nâng cao › “Chép log” chép phiên bản app và 200 dòng log cuối vào clipboard để dán gửi. Lỗi ở mọi
+luồng (cả luồng Bluetooth nền) đều được ghi vào log.
+
+Bộ cài đặt: build_portable.ps1 tạo thêm dist\Bluetooth_Monitor_Setup.exe nếu máy đã cài Inno Setup 6 (miễn phí).
+Bộ cài cài cho riêng người dùng (không cần quyền quản trị), có shortcut Start menu, tùy chọn biểu tượng Desktop và
+khởi động cùng Windows, gỡ cài đặt trong Settings › Apps.
+
+Mã nguồn: main.py chia bớt thành ui_theme.py (màu), ui_toast.py (bảng nổi), ui_audio.py (loa/tai nghe),
+ui_nearby.py (thiết bị xung quanh), apple_pods.py (AirPods). File thử nghiệm cũ chuyển vào archive\.
+
+Bản 2.9 — bảo mật
+
+Ghép đôi an toàn: khi thiết bị dùng mã so khớp hoặc mã hiển thị, bảng Thiết bị BT hiện mã để bạn tự so (“Đúng mã” /
+“Không khớp”); app không bao giờ tự đồng ý thay bạn. Mã khác nghĩa là có thiết bị khác chen vào giữa (MITM). Đóng
+bảng, bấm “Không khớp” hoặc để quá 60 giây đều là từ chối.
+
+Tên thiết bị lạ: tên Bluetooth do thiết bị tự đặt nên có thể giả dạng thông báo. App bỏ ký tự vô hình/điều khiển
+(xuống dòng, đảo chiều chữ, khoảng trắng độ rộng 0), gộp khoảng trắng và giới hạn 48 ký tự cho tên, hãng, model,
+firmware. Tên của thiết bị chưa ghép đôi chỉ là tên nó tự xưng: đừng tin nội dung trong tên.
+
+Chép log: địa chỉ Bluetooth được che (chỉ giữ 2 số cuối) và tên tài khoản Windows trong đường dẫn thành ***.
+
+Cổng nội bộ 29841 chỉ nghe trên chính máy (127.0.0.1), chỉ nhận đúng lệnh SHOW/REFRESH/STATUS; request HTTP từ trang
+web gửi tới localhost bị bỏ qua. Bộ test bảo mật: test_security.py.
+Bản 3.0 — đóng gói một file, sửa lỗi sau rà soát sâu
+
+Một file duy nhất: dist\Bluetooth Monitor.exe (≈20 MB) chép đi đâu chạy đó, có thông tin phiên bản trong
+Properties › Details. Vẫn có bản thư mục dist\Bluetooth Monitor\ (mở nhanh hơn) và zip portable. Mục "Khởi động cùng
+Windows" tự trỏ về exe đang chạy nếu bạn đổi giữa các bản hoặc chuyển app sang chỗ khác.
+
+Sửa lỗi: lỗi quét Bluetooth chập chờn (hay gặp khi máy vừa thức dậy) không còn xóa danh sách, ngắt BLE và chọn nhầm
+tai nghe; tai nghe không còn bị chuột/bàn phím/tay cầm chiếm hết lượt kết nối BLE; dấu tích trong menu khay cập nhật
+ngay; đọc lại radio Bluetooth khi lúc khởi động chưa thấy; watcher hỏng giữa chừng không rò; không còn vòng làm mới
+thừa khi chuyển từ bảng Thiết bị BT sang Cài đặt; AirPods không nhân đôi bộ đếm giờ; lỗi lúc khởi động không để lại
+tiến trình "ma"; cổng nội bộ giữ độc quyền; thoát app tối đa 5 giây dù luồng Bluetooth treo.
+Test: test_security.py, test_deep_review.py.
+Bản 3.1
+
+Cảnh báo pin yếu và "sắp hết pin" cho MỌI thiết bị đang kết nối (tai nghe thứ hai, chuột, bàn phím…), không chỉ
+thiết bị đang xem; mỗi thiết bị báo một lần cho tới khi sạc lại. Tai đang sạc không làm báo nhầm.
+Fast Pair: địa chỉ chiếc JBL nằm trong file cài đặt (fast_pair_address) thay vì trong code; app không đoán tai nghe
+Fast Pair khác theo tên vì gói Fast Pair không có định danh thiết bị.
+Bản 3.2
+
+Nút “Kết nối”: khi tai nghe vừa ngắt (thẻ pin hiện xám “Không kết nối”), bấm “Kết nối” ngay trên thẻ để nối lại,
+không cần mở Cài đặt Bluetooth. Trong bảng Thiết bị BT, thiết bị âm thanh đã ghép đôi có nút “Kết nối”/“Ngắt kết
+nối”. Lệnh gửi tới driver âm thanh Bluetooth tìm theo địa chỉ (không theo tên); chỉ tai nghe/loa Bluetooth thường dùng
+được — chuột, bàn phím, thiết bị chỉ có BLE thì không. Tai nghe phải đang bật và ở gần.
+
+Bộ cài đặt: dist\Bluetooth_Monitor_Setup.exe (cài cho riêng bạn, không cần quyền quản trị; gỡ trong Settings › Apps).
+Gỡ cài đặt chỉ tắt bản đã cài, không đụng bản portable đang chạy ở chỗ khác.
+Bản 3.4 — sửa nhạc bị giật
+
+Quét Fast Pair chuyển sang chế độ thụ động (chỉ nghe gói quảng bá, không gửi gói hỏi), và app không còn thử nối BLE
+tới tai nghe đã có pin trái/phải/hộp (JBL Fast Pair, AirPods). Trước đây hai việc này chiếm sóng Bluetooth dùng chung
+với nhạc, làm tiếng tai nghe bị giật ngay sau khi liên kết JBL.
+Bản 3.5
+
+Quét Fast Pair lọc ngay trong Bluetooth của Windows (chỉ nhận gói Fast Pair): CPU khi đang theo dõi JBL giảm khoảng 9
+lần. Xem chi tiết JBL/AirPods trong bảng Thiết bị BT không còn thử nối BLE (tránh giật nhạc). Nút Kết nối/Ngắt trong
+bảng chi tiết khóa lại khi đang gửi lệnh và quay về danh sách khi xong.
+Bản 3.6
+
+Kết nối/Ngắt chỉ báo thành công khi Windows xác nhận trạng thái thật. Máy dùng Intel Bluetooth Audio Offload (như máy
+này): driver Intel nhận lệnh ngắt nhưng không ngắt tai nghe đang phát, nên app báo "Windows không cho app ngắt tai nghe
+này" và mở Cài đặt Bluetooth để ngắt ở đó. Kết nối lại tai nghe đang ngắt vẫn đi qua driver Bluetooth thường.
+Bản 3.7
+
+Công tắc Loa/Tai nghe khi đang dùng FxSound: app đọc thiết bị thật mà FxSound phát ra (file cài đặt của FxSound) và
+sáng đúng bên đó, ghi "… · qua FxSound". Chuyển sang Loa rồi về Tai nghe thì quay lại qua FxSound, không mất hiệu ứng.
+Bản 3.8 — pin từng bên cho mọi tai nghe true wireless có Fast Pair
+
+Không chỉ chiếc JBL: tai nghe true wireless có Fast Pair (Sony, Pixel Buds, JBL khác…) hiện pin trái/phải/hộp. Bấm
+“Xem pin từng bên” trên thẻ pin: app liệt kê các tai nghe đang phát pin gần máy kèm số trái/phải/hộp để đối chiếu, chọn
+đúng tai nghe của bạn (không đoán theo tên). Nhiều tai nghe liên kết cùng lúc, mỗi chiếc giữ số của nó. Tai nghe chụp
+tai chỉ phát một mức pin nên không có trong danh sách; Galaxy Buds dùng giao thức riêng, chưa hỗ trợ.
+Gỡ liên kết: Cài đặt › Nâng cao › Pin từng bên › “Bỏ”.
+Bản 3.9 — sửa sau rà soát
+
+Tai nghe kết nối lại hiện lại pin từng bên ngay cả khi số pin không đổi; liên kết/gỡ JBL không còn xóa pin từng bên
+của AirPods và tai nghe khác; tai nghe mất số (hãng đổi địa chỉ quảng bá định kỳ) hiện lại nút “Xem pin từng bên” để
+chọn lại; danh sách gói Fast Pair tự dọn; cài đặt không giữ hai liên kết cho cùng một địa chỉ.Nút “Xem pin từng bên” chỉ hiện khi app thật sự nghe thấy một tai nghe true wireless chưa liên kết đang phát pin trái/
+phải/hộp gần máy (nghe thử 30 giây mỗi khi có tai nghe mới kết nối). Tai nghe chụp tai không bao giờ có nút thừa. Vẫn
+chọn tay được trong Cài đặt › Nâng cao › Pin từng bên. (Bản 3.10)
+Bản 4.0 — bản chốt
+
+Bản một file tự dọn thư mục giải nén bị bỏ lại trong %TEMP% (khoảng 36 MB mỗi lần app bị tắt cưỡng bức, vd. Task Manager
+hoặc tắt máy): chỉ khi là phiên duy nhất, chỉ thư mục của chính app, cũ hơn 2 phút và không còn được dùng.
+Tổng kết: 280 test tự động (test_*.py), bản một file dist\Bluetooth Monitor.exe, bộ cài dist\Bluetooth_Monitor_Setup.exe,
+bản nén dist\Bluetooth_Monitor_Portable.zip.
+Bản 4.1 — bớt làm phiền
+
+Thông báo kết nối/ngắt được gộp: app chờ kết nối ổn định (~4 giây) rồi báo MỘT lần cho cả loạt thay đổi (vd. “Đã kết
+nối Akko · 90%; đã ngắt JBL”); tai nghe chập chờn rồi trở lại như cũ thì không báo. Đã hiện bảng nổi thì không thêm
+thông báo Windows. App không bao giờ tự mở Cài đặt Bluetooth. Máy không ngắt được tai nghe đang phát từ app (Intel
+Bluetooth Audio Offload) thì không hiện nút “Ngắt kết nối”.
+Bản 4.2 — sẵn sàng phát hành
+
+Tiếng Anh: Cài đặt › Ngôn ngữ (Theo Windows / Tiếng Việt / English), đổi là áp dụng ngay. Người dùng cũ giữ tiếng
+Việt; cài mới thì theo ngôn ngữ Windows.
+Góp ý: Cài đặt › Góp ý & ủng hộ › “Gửi góp ý…” (và menu khay). Gửi qua Google Form (điền link trong product.py), chưa
+có form thì chép vào clipboard. Kèm log đã che địa chỉ Bluetooth và tên tài khoản (tùy chọn). Nút “Ủng hộ tác giả” hiện
+khi có link trong product.py.
+Microsoft Store: build_msix.ps1 tạo gói dist\BluetoothMonitor_<phiên bản>_x64.msix; khởi động cùng Windows dùng
+StartupTask. Giấy tờ: THIRD_PARTY_NOTICES.txt, PRIVACY.md, STORE_LISTING.md, STORE_GUIDE.md (việc bạn cần làm).Bản 4.3: nút “Ủng hộ tác giả” (Cài đặt › Góp ý & ủng hộ) hiện 2 mã QR chuyển khoản cỡ lớn (chọn qua lại) và nút
+“Chép số tài khoản”; ủng hộ là tùy tâm, không mở khóa tính năng.Bản 4.4: cửa sổ ủng hộ có thêm nút “Ủng hộ qua web…” mở trang Ko-fi (ủng hộ quốc tế qua PayPal).

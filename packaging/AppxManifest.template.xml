@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gói MSIX cho Microsoft Store. build_msix.ps1 thay {{...}} bằng giá trị trong product.py và APP_VERSION. -->
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap desktop rescap">
+  <Identity Name="{{IDENTITY_NAME}}" Publisher="{{PUBLISHER}}" Version="{{VERSION}}" ProcessorArchitecture="x64"/>
+  <Properties>
+    <DisplayName>Bluetooth Monitor</DisplayName>
+    <PublisherDisplayName>{{PUBLISHER_DISPLAY}}</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0"/>
+  </Dependencies>
+  <Resources>
+    <Resource Language="en-US"/>
+    <Resource Language="vi-VN"/>
+  </Resources>
+  <Applications>
+    <Application Id="BluetoothMonitor" Executable="Bluetooth Monitor.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="Bluetooth Monitor"
+                          Description="Battery and connection monitor for Bluetooth headphones"
+                          BackgroundColor="transparent"
+                          Square150x150Logo="Assets\Square150x150Logo.png"
+                          Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png"/>
+      </uap:VisualElements>
+      <Extensions>
+        <!-- "Khởi động cùng Windows" của gói Store: app bật/tắt qua StartupTask API (msix_runtime.py),
+             không ghi registry Run (đường dẫn trong WindowsApps không dùng được ở đó). -->
+        <desktop:Extension Category="windows.startupTask" Executable="Bluetooth Monitor.exe"
+                           EntryPoint="Windows.FullTrustApplication">
+          <desktop:StartupTask TaskId="BluetoothMonitorStartup" Enabled="false" DisplayName="Bluetooth Monitor"/>
+        </desktop:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust"/>
+    <DeviceCapability Name="bluetooth"/>
+  </Capabilities>
+</Package>
