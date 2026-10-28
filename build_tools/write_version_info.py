@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-version = re.search(r'^APP_VERSION = "(.+)"', (ROOT / 'main.py').read_text(encoding='utf-8'), re.M).group(1)
+version = re.search(r'^APP_VERSION = "(.+)"', (ROOT / 'src' / 'main.py').read_text(encoding='utf-8'), re.M).group(1)
 parts = [int(part) for part in version.split('.')] + [0, 0, 0]
 numbers = ', '.join(str(part) for part in parts[:4])
 target = Path(sys.argv[1])

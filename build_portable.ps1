@@ -23,21 +23,23 @@ $common = @('--noconfirm', '--windowed', '--name', 'Bluetooth Monitor',
             '--version-file', $versionFile,
             '--collect-all', 'customtkinter', '--collect-all', 'bleak', '--collect-submodules', 'winrt',
             '--exclude-module', 'numpy', '--exclude-module', 'PIL.AvifImagePlugin', '--exclude-module', 'PIL._avif',
+            '--paths', (Join-Path $PSScriptRoot 'src'),
             '--specpath', $build)
+$launcher = Join-Path $PSScriptRoot 'src\launcher.py'
 
 # 1) Bản thư mục: khởi động nhanh nhất; dùng cho zip portable và bộ cài đặt.
-& $python -m PyInstaller @common --onedir --distpath $dist --workpath (Join-Path $build 'onedir') launcher.py
+& $python -m PyInstaller @common --onedir --distpath $dist --workpath (Join-Path $build 'onedir') $launcher
 if ($LASTEXITCODE -ne 0) { throw 'Build failed' }
 
 # 2) Bản một file: dist\Bluetooth Monitor.exe, chép đi đâu chạy đó (mỗi lần mở tự giải nén vào thư mục tạm).
-& $python -m PyInstaller @common --onefile --distpath $dist --workpath (Join-Path $build 'onefile') launcher.py
+& $python -m PyInstaller @common --onefile --distpath $dist --workpath (Join-Path $build 'onefile') $launcher
 if ($LASTEXITCODE -ne 0) { throw 'One-file build failed' }
 
 # Bộ cài đặt: chỉ khi đã cài Inno Setup 6 (miễn phí); không có thì bỏ qua, bản portable vẫn dùng được.
 $iscc = @("${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe", "$env:ProgramFiles\Inno Setup 6\ISCC.exe",
           "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
 if ($iscc) {
-    & $iscc "/DAppVersion=$version" (Join-Path $PSScriptRoot 'installer\BluetoothMonitor.iss')
+    & $iscc "/DAppVersion=$version" (Join-Path $PSScriptRoot 'packaging\BluetoothMonitor.iss')
     if ($LASTEXITCODE -ne 0) { throw 'Installer build failed' }
 } else {
     Write-Host 'Chưa cài Inno Setup 6: bỏ qua bộ cài đặt (https://jrsoftware.org/isinfo.php).'

@@ -73,7 +73,9 @@ def _migrate_data_dir():
 
 _migrate_data_dir()
 os.makedirs(DATA_DIR, exist_ok=True)
-ASSETS_DIR = os.path.join(APP_DIR, "assets")
+ASSETS_DIR = os.path.join(APP_DIR, "assets")  # bản đóng gói: PyInstaller để assets cạnh mã
+if not os.path.isdir(ASSETS_DIR):  # chạy từ mã nguồn: src\ nằm cạnh assets\
+    ASSETS_DIR = os.path.join(os.path.dirname(APP_DIR), "assets")
 ICON_ICO = os.path.join(ASSETS_DIR, "app_icon.ico")
 ICON_PNG = os.path.join(ASSETS_DIR, "app_icon.png")
 SETTINGS_PATH = os.path.join(DATA_DIR, "headphone_settings.json")

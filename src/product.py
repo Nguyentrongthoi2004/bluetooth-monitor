@@ -19,7 +19,7 @@ DONATE_URL = 'https://ko-fi.com/thoinguyen'  # ủng hộ quốc tế (PayPal qu
 
 # Trang chủ / mã nguồn (GitHub) và chính sách quyền riêng tư công khai (Store yêu cầu có link).
 HOMEPAGE_URL = 'https://github.com/Nguyentrongthoi2004/bluetooth-monitor'
-PRIVACY_URL = 'https://github.com/Nguyentrongthoi2004/bluetooth-monitor/blob/main/PRIVACY.md'
+PRIVACY_URL = 'https://github.com/Nguyentrongthoi2004/bluetooth-monitor/blob/main/docs/PRIVACY.md'
 
 # Định danh gói MSIX: Partner Center cấp khi bạn đặt tên app trên Microsoft Store
 # (Product management › Product identity). Giá trị dưới đây chỉ để build thử.

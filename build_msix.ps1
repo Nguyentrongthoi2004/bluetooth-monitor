@@ -12,11 +12,11 @@ $makeappx = Get-ChildItem (Join-Path $PSScriptRoot 'tools\sdk-buildtools') -Recu
 if (-not $makeappx) { throw 'Thiếu tools\sdk-buildtools (gói NuGet Microsoft.Windows.SDK.BuildTools)' }
 
 # Phiên bản MSIX phải có 4 phần, phần cuối là 0 (Store yêu cầu): "4.1" -> 4.1.0.0
-$version = (Select-String -Path 'main.py' -Pattern '^APP_VERSION = "(.+)"').Matches[0].Groups[1].Value
+$version = (Select-String -Path 'src\main.py' -Pattern '^APP_VERSION = "(.+)"').Matches[0].Groups[1].Value
 $parts = @($version.Split('.')) + @('0', '0', '0')
 $msixVersion = ($parts[0..2] -join '.') + '.0'
 
-$identity = & $python -c "import product; print(product.MSIX_IDENTITY_NAME); print(product.MSIX_PUBLISHER); print(product.MSIX_PUBLISHER_DISPLAY)"
+$identity = & $python -c "import sys; sys.path.insert(0, 'src'); import product; print(product.MSIX_IDENTITY_NAME); print(product.MSIX_PUBLISHER); print(product.MSIX_PUBLISHER_DISPLAY)"
 if ($LASTEXITCODE -ne 0) { throw 'Cannot read product.py' }
 
 $layout = Join-Path $PSScriptRoot 'build\msix\layout'

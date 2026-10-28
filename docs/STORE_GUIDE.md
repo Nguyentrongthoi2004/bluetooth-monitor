@@ -22,16 +22,16 @@ Chưa có link này thì nút "Gửi góp ý" vẫn chạy: nội dung được 
 
 ## 2. Nút ủng hộ — ĐÃ XONG
 
-App đã có 2 mã QR chuyển khoản (ảnh trong `assets\donate_qr_*.png`, thông tin trong `product.py`). Tên chủ tài khoản
+App đã có 2 mã QR chuyển khoản (ảnh trong `assets\donate_qr_*.png`, thông tin trong `src/product.py`). Tên chủ tài khoản
 và số tài khoản sẽ công khai với mọi người dùng. Ủng hộ quốc tế: trang Ko-fi https://ko-fi.com/thoinguyen
 (nối PayPal) hiện qua nút "Ủng hộ qua web…" trong cùng cửa sổ.
 Lưu ý Store: ủng hộ phải là tùy tâm, không mở khóa tính năng. App đã ghi rõ điều này trong cửa sổ ủng hộ.
 
 ## 3. Trang chính sách quyền riêng tư (10 phút)
 
-Store bắt buộc có link chính sách quyền riêng tư. Nội dung đã viết sẵn trong `PRIVACY.md`. Đăng nó công khai, cách dễ
+Store bắt buộc có link chính sách quyền riêng tư. Nội dung đã viết sẵn trong `docs/PRIVACY.md`. Đăng nó công khai, cách dễ
 nhất:
-- Tạo repo GitHub (có thể chỉ chứa PRIVACY.md), hoặc
+- ĐÃ XONG: https://github.com/Nguyentrongthoi2004/bluetooth-monitor/blob/main/docs/PRIVACY.md (đã điền sẵn trong app), hoặc
 - Tạo một trang Google Sites / Notion công khai rồi dán nội dung vào.
 
 → Gửi mình **link trang chính sách**.
@@ -49,7 +49,7 @@ nhất:
 
 ## 5. Mình làm khi có đủ thông tin trên
 
-- Điền vào `product.py`, build lại: `build_portable.ps1` rồi `build_msix.ps1`.
+- Điền vào `src/product.py`, build lại: `build_portable.ps1` rồi `build_msix.ps1`.
 - Ra file `dist\BluetoothMonitor_<phiên bản>_x64.msix` để bạn tải lên Partner Center.
 
 ## 6. Nộp lên Store (bạn làm trong Partner Center)
@@ -58,7 +58,7 @@ nhất:
 - **Properties:** Category "Utilities & tools". Ở mục quyền riêng tư, chọn có thu thập dữ liệu cá nhân hay không: **No**.
 - **Age ratings:** trả lời bảng câu hỏi; app không có nội dung nhạy cảm.
 - **Packages:** tải file `.msix` lên.
-- **Store listings:** thêm tiếng Việt và tiếng Anh, dán nội dung từ `STORE_LISTING.md` kèm 3–5 ảnh chụp màn hình.
+- **Store listings:** thêm tiếng Việt và tiếng Anh, dán nội dung từ `docs/STORE_LISTING.md` kèm 3–5 ảnh chụp màn hình.
 - **Submission options / Notes for certification**, dán:
   > Desktop (full trust) app. Needs a Bluetooth adapter; with no Bluetooth device connected it shows
   > "No headphones connected". It makes no internet connections. runFullTrust is needed for Bluetooth/audio Win32 APIs.

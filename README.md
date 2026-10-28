@@ -37,7 +37,8 @@ Requirements: Windows 10 (version 2004) or Windows 11 with Bluetooth.
 
 ## Privacy
 
-The app runs entirely on your PC and makes no internet connections. Read the full policy in [PRIVACY.md](PRIVACY.md).
+The app runs entirely on your PC and makes no internet connections. Read the full policy in
+[docs/PRIVACY.md](docs/PRIVACY.md).
 
 ## Feedback & support
 
@@ -50,15 +51,23 @@ The app runs entirely on your PC and makes no internet connections. Read the ful
 
 ```powershell
 python -m pip install -r requirements.txt
-python main.py                      # run from source
+python src\main.py                  # run from source
+python run_tests.py                 # all tests (each file in its own process)
+python run_tests.py test_security   # one test file
 .\build_portable.ps1                # dist\: one-file exe, folder build, installer (if Inno Setup 6 is installed)
 .\build_msix.ps1                    # Microsoft Store package
 ```
 
-Tests: each `test_*.py` module runs on its own, for example `python -m unittest test_security`. Run modules one at a
-time; running them all in one process hangs.
+```text
+src/          the app (entry point: launcher.py → main.py)
+tests/        unit tests (test_*.py)
+assets/       icon and donation QR codes
+docs/         privacy policy, Store listing and publishing guide, changelog (Vietnamese)
+packaging/    installer (Inno Setup) and MSIX manifest
+build_tools/  helper scripts used by the build
+```
 
-| File | What it does |
+| File in `src/` | What it does |
 |---|---|
 | `main.py` | App window, tray, settings, alerts |
 | `headphone_monitor.py` | Watches Bluetooth connections (WinRT DeviceWatcher) |
@@ -66,8 +75,10 @@ time; running them all in one process hangs.
 | `ble_battery.py` | Standard Bluetooth Battery Service (GATT) |
 | `bt_scan.py`, `bt_connect.py` | Nearby devices, pairing, connect/disconnect |
 | `audio_output.py`, `ui_audio.py` | Speakers ↔ headphones switch |
+| `ui_*.py` | Panels: toast, nearby devices, per-earbud picker, feedback & support |
 | `i18n.py` | Vietnamese / English |
 | `safe_text.py` | Cleans device names; hides addresses in shared logs |
+| `product.py` | Release settings: feedback form, donation, Store identity |
 
 ## License
 
@@ -84,4 +95,4 @@ Miễn phí, không quảng cáo, không thu thập dữ liệu.
 - Tải bản cài hoặc bản một file ở mục [**Releases**](../../releases).
 - Góp ý ngay trong app: **Cài đặt › Góp ý & ủng hộ**.
 - Ủng hộ tác giả bằng mã QR trong app, hoặc qua [Ko-fi](https://ko-fi.com/thoinguyen).
-- Lịch sử thay đổi: [CHANGELOG.vi.txt](CHANGELOG.vi.txt).
+- Lịch sử thay đổi: [docs/CHANGELOG.vi.txt](docs/CHANGELOG.vi.txt).

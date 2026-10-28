@@ -19,8 +19,10 @@ from ui_theme import blend
 MESSAGE_LIMIT = 2000   # ký tự góp ý
 URL_LOG_LIMIT = 1500   # log gửi qua link form (link quá dài trình duyệt/Google cắt); bản clipboard thì đầy đủ
 KINDS = ('Báo lỗi', 'Ý tưởng', 'Khác')
-# Cùng chỗ main.py tìm icon (bản đóng gói: thư mục giải nén của PyInstaller).
+# Cùng chỗ main.py tìm icon: bản đóng gói thì assets cạnh mã, chạy từ mã nguồn thì src\ nằm cạnh assets\.
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets')
+if not os.path.isdir(ASSETS_DIR):
+    ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'assets')
 QR_DISPLAY_WIDTH = 360  # đủ lớn để điện thoại quét từ màn hình (mã có logo/chấm tròn cần nhiều điểm ảnh)
 
 i18n.register({
